@@ -12,9 +12,9 @@ spec:
         - uri:
             exact: /hello-world
       route:
-        - destination:
+        - destination:  #added destination
             host: hello-world-rest-api
-            subset: v1
+            subset: v1   #added sbuset
           weight: 100
       mirror:
         host: hello-world-rest-api

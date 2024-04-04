@@ -1,0 +1,118 @@
+#https://minikube.sigs.k8s.io/docs/handbook/addons/istio/
+minikube delete --all
+minikube start --memory=8192mb --cpus=4
+
+#c8d0c3aab77f -> minikube container id 
+docker inspect c8d0c3aab77f > minikubeYaml
+
+
+minikube addons enable istio-provisioner
+minikube addons enable istio
+
+kubectl get pods --all-namespaces
+kubectl get po -n istio-system
+
+--
+
+kubectl label namespace default istio-injection=enabled
+
+ kubectl describe namespace
+ kubectl get namespace default --show-labels
+
+kubectl apply -f .\01-helloworld-deployment.yaml
+
+
+---
+kubectl apply -f .\03-creating-virtualservice-external.yaml
+kubectl apply -f .\02-creating-http-gateway.yaml
+
+# minikube service istio-ingressgateway -n istio-system
+
+
+kubectl get svc -n istio-system
+
+
+$INGRESS_NAME = "istio-ingressgateway"
+
+kubectl get svc "$INGRESS_NAME" -n "$INGRESS_NS
+
+
+minikube tunnel
+
+http://localhost/hello-world
+
+
+Invoke-RestMethod -Uri "http://localhost/hello-world"
+---
+#strategy recreate, delete and create again the pods, which mean downtimes on our apps
+
+---
+kubectl delete all -l app=hello-world-rest-api
+
+kubectl apply -f .\05-helloworld-mirroring.yaml
+kubectl logs hello-world-rest-api-v2-646dbf5db4-7m29x
+
+#follow logs in pod2
+ kubectl logs hello-world-rest-api-v2-646dbf5db4-7m29x -f
+
+#In other terminal check the mirror 
+ Invoke-RestMethod -Uri "http://localhost/hello-world"
+
+---
+#canary:
+ #     route:
+ #       - destination:
+ #           host: hello-world-rest-api
+ #           subset: v1
+ #         weight: 10
+ #       - destination:
+ #           host: hello-world-rest-api
+ #           subset: v2
+ #         weight: 90
+
+
+kubectl apply -f .\06-helloworld-canary.yaml
+
+#blue - green, just modify the weight 100 - 0
+ #     route:
+ #       - destination:
+ #           host: hello-world-rest-api
+ #           subset: v1
+ #         weight: 0
+ #       - destination:
+ #           host: hello-world-rest-api
+ #           subset: v2
+ #         weight: 100
+
+
+ ---
+ #kubectl api-resources | grep deployment
+kubectl api-resources | Select-String "deployment"
+
+kubectl apply -f .\deployment.yaml  #09-DIRECTORY
+kubectl apply -f .\deployment.yaml  #10-DIRECTORY
+kubectl apply -f .\07-hw-virtualservice-all-services.yaml
+kubectl get services -n istio-system
+
+--
+#KIALI
+#https://kiali.io/docs/tutorials/travels/01-prerequisites/
+helm install --namespace istio-system --set auth.strategy="anonymous" --repo https://kiali.org/helm-charts kiali-server kiali-server
+kubectl get pod -n istio-system
+
+ minikube dashboard kiali
+
+helm env
+kubectl get secrets -n istio-system
+
+#https://github.com/istio/istio/tree/master/samples/addons
+
+
+ kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}'
+ 
+ kubectl port-forward kiali-b5f94cfcf-snb2j -n istio-system 20001
+
+#PROMETHEUS
+ kubectl apply -f .\prometheus.yaml
+
+git stat
