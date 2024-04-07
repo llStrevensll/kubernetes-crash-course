@@ -1,7 +1,7 @@
 $interval = 5  # Intervalo en segundos
 #$command = "Invoke-RestMethod -Uri http://localhost/hello-world"  # Comando que deseas ejecutar
-#$command = "Invoke-RestMethod -Uri http://localhost/currency-conversion/from/EUR/to/INR/quantity/10"
-$command = "Invoke-RestMethod -Uri http://localhost/currency-exchange/from/USD/to/INR"
+$command = "Invoke-RestMethod -Uri http://localhost/currency-conversion/from/EUR/to/INR/quantity/10"
+#$command = "Invoke-RestMethod -Uri http://localhost/currency-exchange/from/USD/to/INR"
 $logFile = "output.log"  # Archivo de registro donde se agregará la salida
 
 while ($true) {

@@ -108,11 +108,20 @@ kubectl get secrets -n istio-system
 #https://github.com/istio/istio/tree/master/samples/addons
 
 
- kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}'
- 
- kubectl port-forward kiali-b5f94cfcf-snb2j -n istio-system 20001
+kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}'
+
+kubectl port-forward kiali-b5f94cfcf-snb2j -n istio-system 20001
 
 #PROMETHEUS
  kubectl apply -f .\prometheus.yaml
 
-git stat
+.\watch.ps1
+
+#GRAFANA
+
+kubectl apply -f .\grafana.yaml
+kubectl port-forward <podname> -n istio-system 3000
+
+#JAEGER
+kuebctl apply -f .\jaeger.yaml
+kubectl port-forward jaeger-7d7d59b9d-j7tfx -n istio-system 16686
